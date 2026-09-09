@@ -1,0 +1,40 @@
+:root {
+  /* 主色：teal 墨绿青，彻底区别于美团橙红 */
+  --cn-primary: #0f766e;
+  --cn-primary-hover: #0d9488;
+  --cn-primary-light: #ccfbf1;
+
+  /* 强调色：珊瑚橙，仅小面积（点赞、秒杀） */
+  --cn-accent: #f97316;
+
+  /* 中性色 */
+  --cn-text-1: #111827;
+  --cn-text-2: #4b5563;
+  --cn-text-3: #9ca3af;
+  --cn-bg: #f7f6f3;
+  --cn-card: #ffffff;
+  --cn-divider: #f0efec;
+
+  /* 圆角 */
+  --cn-radius-card: 14px;
+  --cn-radius-btn: 10px;
+
+  /* 间距：4px 栅格 */
+  --cn-space-1: 4px;
+  --cn-space-2: 8px;
+  --cn-space-3: 12px;
+  --cn-space-4: 16px;
+  --cn-space-5: 24px;
+  --cn-space-6: 32px;
+
+  /* 阴影 */
+  --cn-shadow: 0 1px 3px rgb(17 24 39 / 6%);
+
+  /* Element Plus 换肤 */
+  --el-color-primary: #0f766e;
+  --el-color-primary-light-3: #5eead4;
+  --el-color-primary-light-5: #99f6e4;
+  --el-color-primary-light-8: #ccfbf1;
+  --el-color-primary-light-9: #f0fdfa;
+  --el-color-primary-dark-2: #115e59;
+}

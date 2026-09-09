@@ -37,6 +37,8 @@ public class CacheClient {
         // 设置逻辑过期
         RedisData redisData = new RedisData();
         redisData.setData(value);
+        // 设置过期时间为当前时间加上指定时间
+        // 这里可以设置为任意时间，例如10秒、1分钟等
         redisData.setExpireTime(LocalDateTime.now().plusSeconds(unit.toSeconds(time)));
         // 写入Redis
         stringRedisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(redisData));
@@ -71,7 +73,7 @@ public class CacheClient {
         this.set(key, r, time, unit);
         return r;
     }
-
+    // 逻辑过期解决缓存击穿
     public <R, ID> R queryWithLogicalExpire(
             String keyPrefix, ID id, Class<R> type, Function<ID, R> dbFallback, Long time, TimeUnit unit) {
         String key = keyPrefix + id;
@@ -86,7 +88,7 @@ public class CacheClient {
         RedisData redisData = JSONUtil.toBean(json, RedisData.class);
         R r = JSONUtil.toBean((JSONObject) redisData.getData(), type);
         LocalDateTime expireTime = redisData.getExpireTime();
-        // 5.判断是否过期
+        // 5.判断是否过期（即过期时间是否大于当前时间）
         if(expireTime.isAfter(LocalDateTime.now())) {
             // 5.1.未过期，直接返回店铺信息
             return r;
@@ -98,7 +100,8 @@ public class CacheClient {
         boolean isLock = tryLock(lockKey);
         // 6.2.判断是否获取锁成功
         if (isLock){
-            // 6.3.成功，开启独立线程，实现缓存重建
+            // 6.3.成功，用线程池开启独立线程，实现缓存重建
+            // DoubleCheck注意这里还需要判断是否命中缓存，因为有可能其他线程已经查询过数据库并重建缓存
             CACHE_REBUILD_EXECUTOR.submit(() -> {
                 try {
                     // 查询数据库
@@ -146,6 +149,8 @@ public class CacheClient {
                 return queryWithMutex(keyPrefix, id, type, dbFallback, time, unit);
             }
             // 4.4.获取锁成功，根据id查询数据库
+            // 注意这里还需要判断是否命中缓存，因为有可能其他线程已经查询过数据库并重建缓存
+            // 可以模拟一下重建缓存的长时间
             r = dbFallback.apply(id);
             // 5.不存在，返回错误
             if (r == null) {
@@ -167,6 +172,7 @@ public class CacheClient {
     }
 
     private boolean tryLock(String key) {
+        // SET IF ABSENT其实就是Redis的SETNX命令
         Boolean flag = stringRedisTemplate.opsForValue().setIfAbsent(key, "1", 10, TimeUnit.SECONDS);
         return BooleanUtil.isTrue(flag);
     }

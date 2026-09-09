@@ -55,6 +55,8 @@ public class ShopController {
      */
     @PutMapping
     public Result updateShop(@RequestBody Shop shop) {
+
+        // 一开始是直接更新数据库
         // 写入数据库
         return shopService.update(shop);
     }

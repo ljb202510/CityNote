@@ -44,6 +44,13 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 
     @Override
     public Result queryById(Long id) {
+        // 初始流程：
+        // 1.查询缓存，存在直接返回
+        // 2.如果缓存不存在，查询数据库
+        // 3.如果数据库不存在，返回失败
+        // 4.如果数据库存在，写入缓存，设置过期时间（验证：需要在Redis里看到），返回成功
+
+
         // 解决缓存穿透
         Shop shop = cacheClient
                 .queryWithPassThrough(CACHE_SHOP_KEY, id, Shop.class, this::getById, CACHE_SHOP_TTL, TimeUnit.MINUTES);
@@ -65,6 +72,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 
     @Override
     @Transactional
+    // 这是一个事务的回滚
     public Result update(Shop shop) {
         Long id = shop.getId();
         if (id == null) {
@@ -72,7 +80,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
         }
         // 1.更新数据库
         updateById(shop);
-        // 2.删除缓存
+        // 2.删除缓存，此时查看Redis，缓存已被删除
         stringRedisTemplate.delete(CACHE_SHOP_KEY + id);
         return Result.ok();
     }
