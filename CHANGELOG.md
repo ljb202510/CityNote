@@ -4,12 +4,12 @@
 
 ---
 
-## 2026-09-09（当前工作区，未提交）
+## 2026-09-09 — [1.1.0] Vue 3 前端重写（提交 `6ef40b7`，22:04 入库）
 
-- `11:02` — `ShopController.java`、`ShopServiceImpl.java`：补充流程注释、清理编译警告（未提交）。
-- `15:56` — `RedisData.java`：清理编译警告（未提交）。
-- `16:22` — `CacheClient.java`：清理编译警告与细节修复（未提交）。
-- `19:20` — `RedisIdWorker.java`：清理泛型/编译警告（未提交）。
+- `11:02` — `ShopController.java`、`ShopServiceImpl.java`：补充流程注释、清理编译警告。
+- `15:56` — `RedisData.java`：清理编译警告。
+- `16:22` — `CacheClient.java`：清理编译警告与细节修复。
+- `19:20` — `RedisIdWorker.java`：清理泛型/编译警告。
 - `20:33` — 新增重构方案文档 `.trae/documents/citynote-web-vue3-rewrite.md`：前端重构范围、关键事实（响应体协议、双拦截器认证链、白名单、点赞 toggle 语义、nginx 代理规则、图片路径协议）与分阶段实施计划。
 - `20:35–20:46` — 新增全新前端工程 `web/`（Vue 3 + Vite 5），将旧版 12 个静态多页 HTML（Vue 2 + ElementUI 无构建）重写为 SPA，后端 API 不变：
   - 脚手架：`unplugin-auto-import` / `unplugin-vue-components` 按需引入 Element Plus；dev 代理 `/api → 8081`（rewrite 去前缀，与 nginx 一致）、`/imgs → 8080`。
